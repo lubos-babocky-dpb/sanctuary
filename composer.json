@@ -1,0 +1,18 @@
+{
+    "name": "dpb/sanctuary",
+    "description": "An advanced API authentication extension for Laravel Sanctum, providing robust token management for anonymous and authenticated clients.",
+    "type": "library",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Dpb\\Sanctuary\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Dpb\\Sanctuary\\Providers\\SanctuaryServiceProvider"
+            ]
+        }
+    }
+}
