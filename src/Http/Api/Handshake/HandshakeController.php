@@ -26,10 +26,12 @@ final class HandshakeController
         );
 
         if($ghost->tokens()->where(column: 'name', operator: '=', value: $this->getTokenName())->doesntExist()) {
+            $newToken = $ghost->createToken(name: $this->getTokenName());
             return $this->responseFactory->json(
                 data: new HandshakeResource(
                     resource: $ghost,
-                    token: $ghost->createToken(name: $this->getTokenName())->plainTextToken
+                    token: $newToken->plainTextToken,
+                    expiresAt: $newToken->accessToken->expires_at
                 ),
                 status: 201
             );
