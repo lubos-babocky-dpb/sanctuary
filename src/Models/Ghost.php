@@ -3,6 +3,7 @@
 namespace Dpb\Sanctuary\Models;
 
 use Dpb\Sanctuary\Exceptions\LinkageFailedException;
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -14,6 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 class Ghost extends Model
 {
     use HasApiTokens;
+    use AuthenticatableTrait;
 
     protected function casts(): array
     {

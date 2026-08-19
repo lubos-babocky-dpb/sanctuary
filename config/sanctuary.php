@@ -51,7 +51,7 @@ return [
     |
     | Default: 'email'
     */
-    'ghost_user_identification_column' => env('DPB_SANCTUARY_GHOST_USER_IDENTIFIER_COLUMN', 'email'),
+    'ghost_user_identification_column' => env('DPB_SANCTUARY_GHOST_USER_IDENTIFIER_COLUMN', 'personal_id'),
 
     /*
     |--------------------------------------------------------------------------

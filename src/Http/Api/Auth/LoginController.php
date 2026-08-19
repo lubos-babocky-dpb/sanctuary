@@ -45,17 +45,15 @@ final class LoginController
                 $this->comparePasswords($request->validated('password'), $identity->password);
                 //[LB:] Passwords are ok, attach user to ghost
                 $ghost->attachIdentity($identity)->save();
-
                 return $this->responseFactory->json(
                     data: new LoginResource($ghost),
                     status: 201
                 );
             }
-
             $this->comparePasswords($request->validated('password'), $ghost->user?->password ?? '');
 
             return $this->responseFactory->json(
-                data: new LoginResource($ghost),
+                data: new LoginResource(resource: $ghost),
                 status: 200
             );
         } catch (UnauthorizedException $ex) {

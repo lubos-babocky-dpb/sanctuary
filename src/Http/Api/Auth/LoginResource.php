@@ -11,9 +11,9 @@ final class LoginResource extends JsonResource
     ): array {
         return [
             'uuid' => $this->resource->uuid,
-            'name' => $this->resource->user?->name,
-            'email' => $this->resource->user?->email,
-            'personalId' => $this->resource->user?->personal_id
+            'name' => $this->resource->user?->name ?? null,
+            'email' => $this->resource->user?->email ?? null,
+            'personalId' => $this->resource->user?->personal_id ?? null
         ];
     }
 }
