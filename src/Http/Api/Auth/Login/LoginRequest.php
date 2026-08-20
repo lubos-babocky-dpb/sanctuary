@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dpb\Sanctuary\Http\Api\Auth;
+namespace Dpb\Sanctuary\Http\Api\Auth\Login;
 
 use Illuminate\Foundation\Http\FormRequest;
 

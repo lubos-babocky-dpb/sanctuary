@@ -2,17 +2,20 @@
 
 namespace Dpb\Sanctuary\Models;
 
+use Dpb\Sanctuary\Contracts\SanctuaryAuthenticatable;
 use Dpb\Sanctuary\Exceptions\LinkageFailedException;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
 
 #[Table('dpb_sanctuary_model_ghost')]
-#[Fillable(['uuid', 'user_id'])]
-class Ghost extends Model
+#[Fillable(['uuid'])]
+class Ghost extends Model implements SanctuaryAuthenticatable
 {
     use HasApiTokens;
     use AuthenticatableTrait;
@@ -21,25 +24,35 @@ class Ghost extends Model
     {
         return [
             'id' => 'integer',
-            'uuid' => 'string',
-            'user_id' => 'integer',
+            'uuid' => 'string'
         ];
     }
 
-    public function isLinked(): bool
+    public function sessions(): HasMany
     {
-        return !is_null($this->user_id);
+        return $this->hasMany(GhostSession::class);
     }
 
-    public function attachIdentity(
-        Authenticatable $identity
-    ): static {
-        if ($this->isLinked()) {
-            throw new LinkageFailedException('Ghost is already linked to an identity.');
-        }
+    public function activeSession(): HasOne
+    {
+        return $this->hasOne(GhostSession::class)
+            ->whereNull('logged_out_at')
+            ->latest('logged_in_at');
+    }
 
-        $this->user_id = $identity->getAuthIdentifier();
+    public function createSession(
+        Authenticatable $identity,
+    ): GhostSession {
+        ($this->activeSession === null)
+            || throw new LinkageFailedException('Ghost already has an active session.');
 
-        return $this;
+        $this->activeSession = $this->sessions()->create([
+            'authenticatable_id' => $identity->getAuthIdentifier(),
+            'authenticatable_type' => $identity::class,
+            'token_id' => $this->accessToken?->id,
+            'logged_in_at' => now(),
+        ]);
+
+        return $this->activeSession;
     }
 }

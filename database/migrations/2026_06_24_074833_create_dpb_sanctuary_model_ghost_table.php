@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        
         Schema::create(
             table: 'dpb_sanctuary_model_ghost',
             callback: function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->uuid('uuid')->unique();
-            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
-            $table->index('uuid');
-            $table->index('user_id');
         });
     }
 

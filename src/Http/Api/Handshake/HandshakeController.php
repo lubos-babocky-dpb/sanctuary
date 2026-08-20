@@ -20,9 +20,9 @@ final class HandshakeController
     public function __invoke(
         HandshakeRequest $request
     ): Response|JsonResponse {
+
         $ghost = Ghost::firstOrCreate(
-            attributes: ['uuid' => $request->validated('uuid')],
-            values: ['user_id' => null]
+            attributes: ['uuid' => $request->validated('uuid')]
         );
 
         if($ghost->tokens()->where(column: 'name', operator: '=', value: $this->getTokenName())->doesntExist()) {

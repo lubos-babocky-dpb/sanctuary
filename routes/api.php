@@ -1,6 +1,7 @@
 <?php
 
-use Dpb\Sanctuary\Http\Api\Auth\LoginController;
+use Dpb\Sanctuary\Http\Api\Auth\Login\LoginController;
+use Dpb\Sanctuary\Http\Api\Auth\Logout\LogoutController;
 use Dpb\Sanctuary\Http\Api\Handshake\HandshakeController;
 use Dpb\Sanctuary\Http\Api\User\UserInfoController;
 use Illuminate\Support\Facades\Config;
@@ -14,6 +15,7 @@ Route::prefix('v1')->group(function () use ($guard) {
 
     Route::middleware("auth:{$guard}")->group(function() {
         Route::post('/login', LoginController::class);
+        Route::post('/logout', LogoutController::class);
         Route::get('/me', UserInfoController::class);
     });
 });
