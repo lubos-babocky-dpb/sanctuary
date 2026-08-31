@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+
 namespace Dpb\Sanctuary\Middleware;
 
 use BackedEnum;
@@ -12,18 +12,18 @@ use Spatie\Permission\Support\Config;
 
 use function Illuminate\Support\enum_value;
 
-class RoleMiddleware
+class PermissionMiddleware
 {
     public function handle(
         Request $request,
         Closure $next,
-        string $role,
+        string $permission,
         ?string $guard = null
     ) {
         $authGuard = Auth::guard($guard);
-
         $user = $authGuard->user()->activeSession->authenticatable;
 
+        // For machine-to-machine Passport clients
         if (! $user && $request->bearerToken() && Config::usePassportClientCredentials()) {
             $user = Guard::getPassportClient($guard);
         }
@@ -32,39 +32,39 @@ class RoleMiddleware
             throw UnauthorizedException::notLoggedIn();
         }
 
-        if (! method_exists($user, 'hasAnyRole')) {
+        if (! method_exists($user, 'hasAnyPermission')) {
             throw UnauthorizedException::missingTraitHasRoles($user);
         }
 
-        $roles = explode('|', self::parseRolesToString($role));
+        $permissions = explode('|', self::parsePermissionsToString($permission));
 
-        if (! $user->hasAnyRole($roles)) {
-            throw UnauthorizedException::forRoles($roles);
+        if (! $user->canAny($permissions)) {
+            throw UnauthorizedException::forPermissions($permissions);
         }
 
         return $next($request);
     }
 
     /**
-     * Specify the role and guard for the middleware.
+     * Specify the permission and guard for the middleware.
      */
-    public static function using(array|string|BackedEnum $role, ?string $guard = null): string
+    public static function using(array|string|BackedEnum $permission, ?string $guard = null): string
     {
-        $roleString = self::parseRolesToString($role);
+        $permissionString = self::parsePermissionsToString(enum_value($permission));
 
-        $args = is_null($guard) ? $roleString : "$roleString,$guard";
+        $args = is_null($guard) ? $permissionString : "$permissionString,$guard";
 
         return static::class.':'.$args;
     }
 
-    protected static function parseRolesToString(array|string|BackedEnum $role): string
+    protected static function parsePermissionsToString(array|string|BackedEnum $permission): string
     {
-        $role = enum_value($role);
+        $permission = enum_value($permission);
 
-        if (is_array($role)) {
-            return implode('|', array_map(fn ($r) => enum_value($r), $role));
+        if (is_array($permission)) {
+            return implode('|', array_map(fn ($r) => enum_value($r), $permission));
         }
 
-        return (string) $role;
+        return (string) $permission;
     }
 }
