@@ -55,4 +55,9 @@ class Ghost extends Model implements SanctuaryAuthenticatable
 
         return $this->activeSession;
     }
+
+    public function pushSubscriptions(): HasMany
+    {
+        return $this->hasMany(GhostPushSubscription::class);
+    }
 }

@@ -3,6 +3,7 @@
 use Dpb\Sanctuary\Http\Api\Auth\Login\LoginController;
 use Dpb\Sanctuary\Http\Api\Auth\Logout\LogoutController;
 use Dpb\Sanctuary\Http\Api\Handshake\HandshakeController;
+use Dpb\Sanctuary\Http\Api\Push\PushSubscriptionController;
 use Dpb\Sanctuary\Http\Api\User\UserInfoController;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,7 @@ Route::prefix('v1')->group(function () use ($guard) {
     Route::post('/handshake', HandshakeController::class);
 
     Route::middleware("auth:{$guard}")->group(function() {
+        Route::post('/push-subscription', PushSubscriptionController::class);
         Route::post('/login', LoginController::class);
         Route::post('/logout', LogoutController::class);
         Route::get('/me', UserInfoController::class);

@@ -42,10 +42,24 @@ return new class extends Migration
                 );
             }
         );
+
+        Schema::create('dpb_sanctuary_model_ghostpushsubscription', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('ghost_id')
+                ->constrained('dpb_sanctuary_model_ghost')
+                ->onDelete('cascade');
+            $table->string('endpoint', 500)
+                ->unique();
+            $table->string('p256dh');
+            $table->string('auth');
+            
+            $table->timestamps();
+        });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists(table: 'dpb_sanctuary_model_ghostpushsubscription');
         Schema::dropIfExists(table: 'dpb_sanctuary_model_ghostsession');
         Schema::dropIfExists(table: 'dpb_sanctuary_model_ghost');
     }
