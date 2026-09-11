@@ -2,8 +2,11 @@
 
 namespace Dpb\Sanctuary\Providers;
 
+use Dpb\Sanctuary\Events\WebPushMessage;
+use Dpb\Sanctuary\Listeners\SendWebPushMessage;
 use Dpb\Sanctuary\Models\Ghost;
 use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
@@ -36,12 +39,15 @@ class SanctuaryServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(
+        Dispatcher $dispatcher
+    ): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
         $this->configureGuard();
         $this->registerRoutes();
         $this->resolveRelations();
+        $dispatcher->listen(WebPushMessage::class, SendWebPushMessage::class);
     }
 
     /**
