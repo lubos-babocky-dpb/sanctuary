@@ -13,16 +13,11 @@ class SendWebPushMessage
         private readonly WebPushService $webPush,
     ) {}
 
-public function handle(WebPushMessage $message): void
-{
-    logger()->info('SEND WEB PUSH MESSAGE', [
-        'type' => $message->type,
-        'data' => $message->data,
-    ]);
-
-    $this->webPush->send(
-        $message->type,
-        $message->data,
-    );
-}
+    public function handle(WebPushMessage $message): void
+    {
+        $this->webPush->send(
+            $message->type,
+            $message->data,
+        );
+    }
 }
