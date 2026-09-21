@@ -21,7 +21,7 @@ class PermissionMiddleware
         ?string $guard = null
     ) {
         $authGuard = Auth::guard($guard);
-        $user = $authGuard->user()->activeSession->authenticatable;
+        $user = $authGuard->user()?->activeSession?->authenticatable ?? null;
 
         // For machine-to-machine Passport clients
         if (! $user && $request->bearerToken() && Config::usePassportClientCredentials()) {
